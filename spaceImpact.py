@@ -188,8 +188,9 @@ def spaceImpact(genomas, config):
             if len(nave.aliens) > 0:
                 alien_mais_proximo = nave.aliens[0]  # Como há apenas um alien por vez
                 input_data.append(alien_mais_proximo.pos_alien_x - nave.pos_nave_x)  # Distância X
-                # input_data.append(alien_mais_proximo.pos_alien_y - nave.pos_nave_y)  # Distância Y
+                input_data.append(alien_mais_proximo.pos_alien_y - nave.pos_nave_y)  # Distância Y
                 input_data.append(alien_mais_proximo.velocidade)  # Velocidade do alien
+                input_data.append(nave.velocidade)  # Velocidade do alien
                 # input_data.append(ALTURA_NAVE) # tamanho do alien
             else:
                 input_data += [0, 0, 0]  # Se não houver aliens, entradas são 0
@@ -205,11 +206,11 @@ def spaceImpact(genomas, config):
             elif output[0] > output[1]:  # Move para baixo
                 nave.movimentarParaBaixo()
 
-            # teclas = pg.key.get_pressed()
-            # if teclas[pg.K_UP]:  # Pressionando a tecla para cima
-            #     nave.movimentarParaCima()
-            # if teclas[pg.K_DOWN]:  # Pressionando a tecla para baixo
-            #     nave.movimentarParaBaixo()
+            teclas = pg.key.get_pressed()
+            if teclas[pg.K_UP]:  # Pressionando a tecla para cima
+                nave.movimentarParaCima()
+            if teclas[pg.K_DOWN]:  # Pressionando a tecla para baixo
+                nave.movimentarParaBaixo()
 
             # Verificar se a nave se moveu no eixo Y
             if nave.pos_nave_y == nave.ultima_posicao_y:
