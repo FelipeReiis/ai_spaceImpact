@@ -5,7 +5,7 @@ import os
 
 LARGURA_JANELA = 400  # Definindo a largura fixa
 ALTURA_NAVE = 50
-ALTURA_JANELA = ALTURA_NAVE * 10  # A tela tem duas vezes o tamanho da nave
+ALTURA_JANELA = ALTURA_NAVE * 10  # A tela tem dez vezes o tamanho da nave
 geracao = 0
 
 class Vida():
@@ -103,10 +103,16 @@ class Nave():
     def movimentarParaCima(self):
         if self.pos_nave_y > 10:
             self.pos_nave_y -= self.velocidade
+            # Check if reached top boundary
+            if self.pos_nave_y <= 10:
+                self.pos_nave_y = 245
 
     def movimentarParaBaixo(self):
         if self.pos_nave_y < ALTURA_JANELA - self.areaNave.height:
             self.pos_nave_y += self.velocidade
+            # Check if reached bottom boundary
+            if self.pos_nave_y >= ALTURA_JANELA - self.areaNave.height:
+                self.pos_nave_y = 245
     
     def criarAliens(self, imagens_aliens):
         novo_alien = Alien(imagens_aliens, self.pos_nave_y)  # Passa apenas a posição Y da nave
@@ -187,15 +193,17 @@ def spaceImpact(genomas, config):
             # Obter o alien mais próximo e seus dados
             if len(nave.aliens) > 0:
                 alien_mais_proximo = nave.aliens[0]  # Como há apenas um alien por vez
-                input_data.append(alien_mais_proximo.pos_alien_x - nave.pos_nave_x)  # Distância X
-                input_data.append(alien_mais_proximo.pos_alien_y - nave.pos_nave_y)  # Distância Y
-                input_data.append(alien_mais_proximo.velocidade)  # Velocidade do alien
+                input_data.append(abs(alien_mais_proximo.pos_alien_x) - abs(nave.pos_nave_x))  # Distância X
+                input_data.append(abs(alien_mais_proximo.pos_alien_y) - abs(nave.pos_nave_y))  # Distância Y
+                # input_data.append(alien_mais_proximo.velocidade)  # Velocidade do alien
                 input_data.append(nave.velocidade)  # Velocidade do alien
+                input_data.append(nave.pos_nave_x)  # Posição X da nave
+
                 # input_data.append(ALTURA_NAVE) # tamanho do alien
             else:
                 input_data += [0, 0, 0]  # Se não houver aliens, entradas são 0
 
-            input_data.append(nave.pos_nave_y)  # Posição Y da nave
+            input_data.append(abs(nave.pos_nave_y))  # Posição Y da nave
 
             # Obter a saída da rede neural
             output = redes[i].activate(input_data)
@@ -231,7 +239,6 @@ def spaceImpact(genomas, config):
 
             nave.colocarNaveNaTela(tela)
             nave.colocarAliensNaTela(tela)
-
             # Atualizar a posição dos aliens para seguir as naves
             for alien in nave.aliens:
                 alien.movimentarAlien()
