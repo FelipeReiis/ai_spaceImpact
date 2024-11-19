@@ -103,16 +103,10 @@ class Nave():
     def movimentarParaCima(self):
         if self.pos_nave_y > 10:
             self.pos_nave_y -= self.velocidade
-            # Check if reached top boundary
-            if self.pos_nave_y <= 10:
-                self.pos_nave_y = 245
 
     def movimentarParaBaixo(self):
         if self.pos_nave_y < ALTURA_JANELA - self.areaNave.height:
             self.pos_nave_y += self.velocidade
-            # Check if reached bottom boundary
-            if self.pos_nave_y >= ALTURA_JANELA - self.areaNave.height:
-                self.pos_nave_y = 245
     
     def criarAliens(self, imagens_aliens):
         novo_alien = Alien(imagens_aliens, self.pos_nave_y)  # Passa apenas a posição Y da nave
@@ -195,7 +189,8 @@ def spaceImpact(genomas, config):
                 alien_mais_proximo = nave.aliens[0]  # Como há apenas um alien por vez
                 input_data.append(abs(alien_mais_proximo.pos_alien_x) - abs(nave.pos_nave_x))  # Distância X
                 input_data.append(abs(alien_mais_proximo.pos_alien_y) - abs(nave.pos_nave_y))  # Distância Y
-                # input_data.append(alien_mais_proximo.velocidade)  # Velocidade do alien
+                input_data.append(abs(ALTURA_JANELA - nave.pos_nave_y - nave.areaNave.height))
+                input_data.append(alien_mais_proximo.velocidade)  # Velocidade do alien
                 input_data.append(nave.velocidade)  # Velocidade do alien
                 input_data.append(nave.pos_nave_x)  # Posição X da nave
 
@@ -204,15 +199,22 @@ def spaceImpact(genomas, config):
                 input_data += [0, 0, 0]  # Se não houver aliens, entradas são 0
 
             input_data.append(abs(nave.pos_nave_y))  # Posição Y da nave
-
             # Obter a saída da rede neural
             output = redes[i].activate(input_data)
-
             # Ações da nave - inverter a lógica para verificar
+            # print(output)
+
             if output[1] > output[0]:  # Move para cima
                 nave.movimentarParaCima()
             elif output[0] > output[1]:  # Move para baixo
                 nave.movimentarParaBaixo()
+            # elif output[0] == output[1]:
+            #     nave.pos_nave_y = 245
+                # if nave.pos_nave_y <= 385:
+                #     nave.movimentarParaBaixo()
+                # elif nave.pos_nave_y >= 55:
+                #     nave.movimentarParaCima()
+
 
             teclas = pg.key.get_pressed()
             if teclas[pg.K_UP]:  # Pressionando a tecla para cima
@@ -253,7 +255,9 @@ def spaceImpact(genomas, config):
 
         for nave_removida in naves_removidas:
             naves.remove(nave_removida)
-
+        fonte = pg.font.Font(None, 36)
+        fitnessText = fonte.render(f"Fitness: {lista_genomas[i].fitness}", True, (255, 255, 255))
+        tela.blit(fitnessText, (10, 10))
         pg.display.update()
         clock.tick(60)
 
