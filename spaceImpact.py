@@ -5,7 +5,7 @@ import os
 
 LARGURA_JANELA = 400  # Definindo a largura fixa
 ALTURA_NAVE = 50
-ALTURA_JANELA = ALTURA_NAVE * 10  # A tela tem duas vezes o tamanho da nave
+ALTURA_JANELA = ALTURA_NAVE * 10  # A tela tem dez vezes o tamanho da nave
 geracao = 0
 
 class Vida():
@@ -26,8 +26,8 @@ class Vida():
     def colocarVidaNaTela(self, item):
         item.blit(self.imagemVida, self.areaVida.topleft)
     
-    def colidir(self):
-        self.colidida = True
+    # def colidir(self):
+    #     self.colidida = True
 
     def naoColidir(self):
         self.colidida = False
@@ -86,8 +86,8 @@ class Bala():
         pg.draw.rect(item, (56, 66, 55), hit_box_projetil, 4)
         item.blit(self.imgProjetil, (self.pos_projetil_x, self.pos_projetil_y))
 
-def colisao(projetil, alien):
-    return projetil.colliderect(alien)
+# def colisao(projetil, alien):
+#     return projetil.colliderect(alien)
 
 class Nave():
     def __init__(self):
@@ -129,9 +129,6 @@ class Nave():
 
     def obterPontuacao(self):
         return self.pontuacao
-
-    def colisaoNaveAlien(nave, alien):
-        return nave.areaNave.colliderect(alien.areaAlien)
 
 # Função principal que aplica a IA com NEAT
 def spaceImpact(genomas, config):
@@ -187,29 +184,33 @@ def spaceImpact(genomas, config):
             # Obter o alien mais próximo e seus dados
             if len(nave.aliens) > 0:
                 alien_mais_proximo = nave.aliens[0]  # Como há apenas um alien por vez
-                input_data.append(alien_mais_proximo.pos_alien_x - nave.pos_nave_x)  # Distância X
-                # input_data.append(alien_mais_proximo.pos_alien_y - nave.pos_nave_y)  # Distância Y
+                input_data.append(abs(alien_mais_proximo.pos_alien_x) - abs(nave.pos_nave_x))  # Distância X
+                input_data.append(abs(alien_mais_proximo.pos_alien_y) - abs(nave.pos_nave_y))  # Distância Y
+                input_data.append(abs(ALTURA_JANELA - nave.pos_nave_y - nave.areaNave.height))
                 input_data.append(alien_mais_proximo.velocidade)  # Velocidade do alien
+                input_data.append(nave.velocidade)  # Velocidade do alien
+                input_data.append(nave.pos_nave_x)  # Posição X da nave
+
                 # input_data.append(ALTURA_NAVE) # tamanho do alien
             else:
                 input_data += [0, 0, 0]  # Se não houver aliens, entradas são 0
 
-            input_data.append(nave.pos_nave_y)  # Posição Y da nave
-
+            input_data.append(abs(nave.pos_nave_y))  # Posição Y da nave
             # Obter a saída da rede neural
             output = redes[i].activate(input_data)
-
             # Ações da nave - inverter a lógica para verificar
+
             if output[1] > output[0]:  # Move para cima
                 nave.movimentarParaCima()
             elif output[0] > output[1]:  # Move para baixo
                 nave.movimentarParaBaixo()
 
-            # teclas = pg.key.get_pressed()
-            # if teclas[pg.K_UP]:  # Pressionando a tecla para cima
-            #     nave.movimentarParaCima()
-            # if teclas[pg.K_DOWN]:  # Pressionando a tecla para baixo
-            #     nave.movimentarParaBaixo()
+
+            teclas = pg.key.get_pressed()
+            if teclas[pg.K_UP]:  # Pressionando a tecla para cima
+                nave.movimentarParaCima()
+            if teclas[pg.K_DOWN]:  # Pressionando a tecla para baixo
+                nave.movimentarParaBaixo()
 
             # Verificar se a nave se moveu no eixo Y
             if nave.pos_nave_y == nave.ultima_posicao_y:
@@ -230,7 +231,6 @@ def spaceImpact(genomas, config):
 
             nave.colocarNaveNaTela(tela)
             nave.colocarAliensNaTela(tela)
-
             # Atualizar a posição dos aliens para seguir as naves
             for alien in nave.aliens:
                 alien.movimentarAlien()
@@ -245,7 +245,9 @@ def spaceImpact(genomas, config):
 
         for nave_removida in naves_removidas:
             naves.remove(nave_removida)
-
+        fonte = pg.font.Font(None, 36)
+        fitnessText = fonte.render(f"Fitness: {lista_genomas[i].fitness}", True, (255, 255, 255))
+        tela.blit(fitnessText, (10, 10))
         pg.display.update()
         clock.tick(60)
 
