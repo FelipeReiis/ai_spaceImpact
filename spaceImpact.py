@@ -26,8 +26,8 @@ class Vida():
     def colocarVidaNaTela(self, item):
         item.blit(self.imagemVida, self.areaVida.topleft)
     
-    def colidir(self):
-        self.colidida = True
+    # def colidir(self):
+    #     self.colidida = True
 
     def naoColidir(self):
         self.colidida = False
@@ -86,8 +86,8 @@ class Bala():
         pg.draw.rect(item, (56, 66, 55), hit_box_projetil, 4)
         item.blit(self.imgProjetil, (self.pos_projetil_x, self.pos_projetil_y))
 
-def colisao(projetil, alien):
-    return projetil.colliderect(alien)
+# def colisao(projetil, alien):
+#     return projetil.colliderect(alien)
 
 class Nave():
     def __init__(self):
@@ -129,9 +129,6 @@ class Nave():
 
     def obterPontuacao(self):
         return self.pontuacao
-
-    def colisaoNaveAlien(nave, alien):
-        return nave.areaNave.colliderect(alien.areaAlien)
 
 # Função principal que aplica a IA com NEAT
 def spaceImpact(genomas, config):
@@ -202,18 +199,11 @@ def spaceImpact(genomas, config):
             # Obter a saída da rede neural
             output = redes[i].activate(input_data)
             # Ações da nave - inverter a lógica para verificar
-            # print(output)
 
             if output[1] > output[0]:  # Move para cima
                 nave.movimentarParaCima()
             elif output[0] > output[1]:  # Move para baixo
                 nave.movimentarParaBaixo()
-            # elif output[0] == output[1]:
-            #     nave.pos_nave_y = 245
-                # if nave.pos_nave_y <= 385:
-                #     nave.movimentarParaBaixo()
-                # elif nave.pos_nave_y >= 55:
-                #     nave.movimentarParaCima()
 
 
             teclas = pg.key.get_pressed()

@@ -1,13 +1,14 @@
-# spaceImpact
+# IA - spaceImpact
 A3 computação gráfica
 Autores - RA:
-EVERTON NAZARÉ DO SACRAMENTO - 1272119075
+ARIANE SANTOS GOMES - 1272121526
 FELIPE MESSIAS ALVES DE JESUS REIS - 1272115789
-JOSÉ MIRALDO MASCARENHAS DIAS JÚNIOR - 1272118531
+GABRIEL SANTOS DA SILVA - 1272121748
+JOÃO VITOR PEREIRA SANTOS - 1272115566
 LEONARDO OLIVEIRA DA SILVA SANTOS - 1272121620
-SERGIO RICARDO SANTANA SANTOS - 1272116116
+PEDRO AZEVEDO DE QUEIROS - 1272123228
 
-Para o programa funcionar é necessário estar instalado o Python e a biblioteca "pygame".
+Para o programa funcionar é necessário estar instalado o Python as bibliotecas "pygame" e "neat-python".
 
 Caso não tenha nenhuma versão do python instalado basta abrir seguir os passos a seguir:
 
@@ -25,4 +26,8 @@ Após a instalação repita o primeiro comando para conrfirmar que não houveram
 
 Com o pyhton instalado basta abrir o promp de comando/PowerShell (windows) ou o terminal (linux):
 No Windows use o comando |pip install pygame|
+No Windows use o comando |pip install neat-python|
+
 No Linux use o comando |sudo apt-get install python3-pygame|
+No Windows use o comando |pip install neat-python|
+
